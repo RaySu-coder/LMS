@@ -4099,6 +4099,27 @@ function getProjectTimeline(caseId) {
   var now = new Date();
   var events = [];
 
+  var projectTimeline = getSheetSafe('Project_Timeline').getDataRange().getValues();
+  var events = [];
+
+  for (var i = 1; i < projectTimeline.length; i++) {
+    if (String(projectTimeline[i][1]) === String(caseId)) {
+      events.push({
+        eventId: projectTimeline[i][0],
+        caseId: projectTimeline[i][1],
+        eventType: projectTimeline[i][2],
+        eventDate: projectTimeline[i][3],
+        title: projectTimeline[i][4],
+        description: projectTimeline[i][5],
+        attachments: projectTimeline[i][6],
+        status: projectTimeline[i][7],
+        createdBy: projectTimeline[i][8],
+        createdAt: projectTimeline[i][9],
+      });
+    }
+  }
+
+
   var meetingRecords = getSheetSafe('Meeting_Records')
     .getDataRange()
     .getValues();
