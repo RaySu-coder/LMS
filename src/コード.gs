@@ -4094,25 +4094,87 @@ function resetYeeflowSyncFlag(rowNum) {
  * @return {Array} イベント配列
  */
 function getProjectTimeline(caseId) {
-  var sheet = getSheetSafe('Project_Timeline');
-  var rows = sheet.getDataRange().getValues();
+  console.log('getProjectTimeline caseId=' + caseId);
+
+  var now = new Date();
   var events = [];
 
-  for (var i = 1; i < rows.length; i++) {
-    if (String(rows[i][1]) === String(caseId)) {
-      events.push({
-        eventId: rows[i][0],
-        caseId: rows[i][1],
-        eventType: rows[i][2],
-        eventDate: rows[i][3],
-        title: rows[i][4],
-        description: rows[i][5],
-        attachments: rows[i][6],
-        status: rows[i][7],
-        createdBy: rows[i][8],
-        createdAt: rows[i][9],
-      });
+  var meetingRecords = getSheetSafe('Meeting_Records')
+    .getDataRange()
+    .getValues();
+  if (!meetingRecords || meetingRecords.length < 2) {
+    console.log('No meeting records found');
+    return events;
+  }
+
+  for (var j = 1; j < meetingRecords.length; j++) {
+    if (String(meetingRecords[j][1]) !== String(caseId)) {
+      continue;
     }
+
+    // meetingRecords[j][0]: 2026-04-22
+
+    events.push({
+      eventId: 'MR-' + meetingRecords[j][0] + '-' + caseId,
+      caseId: meetingRecords[j][1],
+      eventType: 'Meeting',
+      eventDate: meetingRecords[j][0],
+      title: 'meeting-' + meetingRecords[j][0],
+      description: String(meetingRecords[j][5] || ''),
+      attachments: '',
+      status: now > new Date(meetingRecords[j][0]) ? 'Completed' : 'Planned',
+      createdBy: meetingRecords[j][3] || 'Unknown',
+      createdAt: meetingRecords[j][6],
+    });
+  }
+
+  var caseTodo = getSheetSafe('Case_Todo').getDataRange().getValues();
+  if (!caseTodo || caseTodo.length < 2) {
+    console.log('No case todo found');
+    return events;
+  }
+  
+  for (var k = 1; k < caseTodo.length; k++) {
+    if (String(caseTodo[k][1]) !== String(caseId)) {
+      continue;
+    }
+    events.push({
+      eventId: caseTodo[k][0],
+      caseId: caseTodo[k][1],
+      eventType: 'Todo',
+      eventDate: caseTodo[k][5],
+      title: caseTodo[k][3],
+      description: String(caseTodo[k][3] || ''),
+      attachments: caseTodo[k][4] || '',
+      status: now > new Date(caseTodo[k][5]) ? 'Completed' : 'Planned',
+      createdBy: '',
+      createdAt: caseTodo[k][7],
+    });
+  }
+
+  var feedbackLog = getSheetSafe('Feedback_Log').getDataRange().getValues();
+  if (!feedbackLog || feedbackLog.length < 2) {
+    console.log('No feedback logs found');
+    return events;
+  }
+
+  for (var m = 1; m < feedbackLog.length; m++) {
+    if (String(feedbackLog[m][1]) !== String(caseId)) {
+      continue;
+    }
+
+    events.push({
+      eventId: 'FB-' + feedbackLog[m][0] + '-' + caseId,
+      caseId: feedbackLog[m][1],
+      eventType: 'Feedback',
+      eventDate: String(new Date(feedbackLog[m][0])) || '',
+      title: feedbackLog[m][2],
+      description: String(feedbackLog[m][6] || ''),
+      attachments: '',
+      status: now > new Date(feedbackLog[m][0]) ? 'Completed' : 'Planned',
+      createdBy: feedbackLog[m][7] || 'Unknown',
+      createdAt: feedbackLog[m][0],
+    });
   }
 
   // 日付順にソート（新しい順）
@@ -4122,7 +4184,7 @@ function getProjectTimeline(caseId) {
     return dateB - dateA;
   });
 
-  return events;
+  return JSON.parse(JSON.stringify(events));
 }
 
 /**
