@@ -2772,10 +2772,7 @@
             return;
           }
           el.innerHTML = list.map(function (op) {
-            var isGo = op.decision === 'Go';
-            var badge = isGo
-              ? '<span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[9px] font-black">✅ Go</span>'
-              : '<span class="bg-red-100 text-red-600 px-2 py-0.5 rounded-full text-[9px] font-black">❌ Skip</span>';
+            var badge = `<span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[9px] font-black">${op.decision}</span>`;
             return '<div class="bg-slate-50 rounded-2xl p-4 border border-slate-100">' +
               '<div class="flex items-center justify-between mb-1">' +
               '<span class="font-black text-slate-700 text-[12px]">' + escHtml(op.name) + '</span>' + badge +
