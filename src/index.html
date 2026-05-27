@@ -3739,8 +3739,7 @@
 
         html += '<tr class="hover:bg-slate-50 transition-all" data-caseid="' + escHtml(p.caseId) + '" data-corp="' + escHtml(p.corp) + '" data-category="' + escHtml(p.category || '') + '" data-status="' + escHtml(statusText) + '">' +
           '<td class="px-6 py-4 font-mono text-[10px] font-bold text-indigo-600">' + escHtml(p.caseId) + '</td>' +
-          '<td class="px-6 py-4 font-bold text-slate-700">' + escHtml(p.corp) + '</td>' +
-          '<td class="px-6 py-4 text-slate-500">' + escHtml(p.industry || '—') + '</td>' +
+          '<td class="px-6 py-4 font-bold text-slate-700 cursor-pointer" onclick="openArchiveDetail(\'' + escHtml(p.caseId) + '\',\'' + escHtml(p.corp) + '\')">' + escHtml(p.corp) + '</td>' +          '<td class="px-6 py-4 text-slate-500">' + escHtml(p.industry || '—') + '</td>' +
           '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-[9px] font-black bg-slate-100 text-slate-600">' + escHtml(p.category || '—') + '</span></td>' +
           '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-[9px] font-black ' + statusClass + '">' + escHtml(statusText) + '</span></td>' +
           '<td class="px-6 py-4 text-slate-400 text-[10px]" id="event-count-' + escHtml(p.caseId) + '">—</td>' +
